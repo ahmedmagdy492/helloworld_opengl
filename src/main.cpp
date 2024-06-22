@@ -79,16 +79,16 @@ int main() {
 	const int width = 800;
 	const int height = 600;
 
-	float firstTriangleVertexData[] = {
-		-0.9f, -0.5f, 0.0f,  // left 
-		-0.0f, -0.5f, 0.0f,  // right
-		-0.45f, 0.5f, 0.0f,  // top 
+	float vertexData[] = {
+		-0.5f,  0.5f, 0.0f,  
+		 0.5f,  0.5f, 0.0f,  
+		 0.5f, -0.5f, 0.0f,
+		-0.5f, -0.5f, 0.0f
 	};
 
-	float secondTriangleVertexData[] = {
-		 0.0f, -0.5f, 0.0f,  // left
-		 0.9f, -0.5f, 0.0f,  // right
-		 0.45f, 0.5f, 0.0f
+	unsigned int indicies[] = {
+		0, 1, 2,
+		0, 3, 2
 	};
 
 	glfwInit();
@@ -115,41 +115,34 @@ int main() {
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	unsigned int vboFirstTriangle, vboSecondTriangle;
-	glGenBuffers(1, &vboFirstTriangle);
-	glGenBuffers(1, &vboSecondTriangle);
+	unsigned int vbo;
+	glGenBuffers(1, &vbo);
 
-	unsigned int vaoFirstTriangle, vaoSecondTriangle;
-	glGenVertexArrays(1, &vaoFirstTriangle);
-	glGenVertexArrays(1, &vaoSecondTriangle);
-	glBindVertexArray(vaoFirstTriangle);
+	unsigned int ebo;
+	glGenBuffers(1, &ebo);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vboFirstTriangle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(firstTriangleVertexData), firstTriangleVertexData, GL_STATIC_DRAW);
+	unsigned int vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
 
 	std::string vertexShaderPath = "shaders/vertex_shader.vert";
 	std::string vertexShaderSrcCode = loadShader(vertexShaderPath);
-	std::string fragShader1Path = "shaders/fragment_shader.frag";
-	std::string fragShader1SrcCode = loadShader(fragShader1Path);
-	std::string fragShader2Path = "shaders/yellow_fragment_shader.frag";
-	std::string fragShader2SrcCode = loadShader(fragShader2Path);
+	std::string fragShaderPath = "shaders/fragment_shader.frag";
+	std::string fragShaderSrcCode = loadShader(fragShaderPath);
 
 	unsigned int vertexShader = compileShader(vertexShaderSrcCode, GL_VERTEX_SHADER);
-	unsigned int fragShader1 = compileShader(fragShader1SrcCode, GL_FRAGMENT_SHADER);
-	unsigned int fragShader2 = compileShader(fragShader2SrcCode, GL_FRAGMENT_SHADER);
+	unsigned int fragShader = compileShader(fragShaderSrcCode, GL_FRAGMENT_SHADER);
 
-	unsigned int shaderProgram1 = createShaderProgramAndLink(vertexShader, fragShader1);
-	unsigned int shaderProgram2 = createShaderProgramAndLink(vertexShader, fragShader2);
+	unsigned int shaderProgram = createShaderProgramAndLink(vertexShader, fragShader);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void*)0);
 	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(vaoSecondTriangle);
-	glBindBuffer(GL_ARRAY_BUFFER, vboSecondTriangle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(secondTriangleVertexData), secondTriangleVertexData, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void*)0);
-	glEnableVertexAttribArray(0);
-	glBindVertexArray(0);
 
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);
@@ -157,28 +150,19 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		glUseProgram(shaderProgram1);
-
-		glBindVertexArray(vaoFirstTriangle);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		glUseProgram(shaderProgram2);
-
-		glBindVertexArray(vaoSecondTriangle);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glUseProgram(shaderProgram);
+		glBindVertexArray(vao);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays(1, &vaoFirstTriangle);
-	glDeleteVertexArrays(1, &vaoSecondTriangle);
+	glDeleteVertexArrays(1, &vao);
 
-	glDeleteBuffers(1, &vboFirstTriangle);
-	glDeleteBuffers(1, &vboSecondTriangle);
+	glDeleteBuffers(1, &vbo);
 
-	glDeleteProgram(shaderProgram1);
-	glDeleteProgram(shaderProgram2);
+	glDeleteProgram(shaderProgram);
 
 	glfwTerminate();
 }

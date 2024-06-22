@@ -27,6 +27,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment_shader.frag" />
-    <None Include="shaders\yellow_fragment_shader.frag" />
   </ItemGroup>
 </Project>
