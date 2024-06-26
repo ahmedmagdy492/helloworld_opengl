@@ -80,15 +80,13 @@ int main() {
 	const int height = 600;
 
 	float vertexData[] = {
-		-0.5f,  0.5f, 0.0f,  
-		 0.5f,  0.5f, 0.0f,  
-		 0.5f, -0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f
+		-0.5f, -0.5f, 0.0f,  
+		 0.0f,  0.5f, 0.0f,  
+		 0.5f, -0.5f, 0.0f
 	};
 
 	unsigned int indicies[] = {
-		0, 1, 2,
-		0, 3, 2
+		0, 1, 2
 	};
 
 	glfwInit();
@@ -160,10 +158,10 @@ int main() {
 		glUseProgram(shaderProgram);
 		float timeValue = glfwGetTime();
 		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		glUniform4f(uniformColorLocation, 0.0f, greenValue, 1.0f, 1.0f);
+		glUniform4f(uniformColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
 		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
