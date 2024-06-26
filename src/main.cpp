@@ -115,6 +115,11 @@ int main() {
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+	int nVattribs;
+	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nVattribs);
+
+	std::cout << "max no of vertex attributes: " << nVattribs << std::endl;
+
 	unsigned int vbo;
 	glGenBuffers(1, &vbo);
 
