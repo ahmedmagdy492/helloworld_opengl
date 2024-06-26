@@ -5,6 +5,8 @@
 #include <fstream>
 #include <sstream>
 
+#include <cmath>
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
@@ -130,6 +132,8 @@ int main() {
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
+	float rotationAngle = 0.0f;
+
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
 
@@ -155,18 +159,23 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		// setting the uniform variable
-		int uniformColorLocation = glGetUniformLocation(shaderProgram, "mainColor");
+		int thetaUniformLocation = glGetUniformLocation(shaderProgram, "theta");
 		glUseProgram(shaderProgram);
-		float timeValue = glfwGetTime();
-		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		glUniform4f(uniformColorLocation, 0.0f, greenValue, 1.0f, 1.0f);
+		glUniform1f(thetaUniformLocation, rotationAngle);
 
 		glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		if (rotationAngle < 360) {
+			float timeValue = glfwGetTime();
+			rotationAngle += 0.1f * 0.001f;
+		}
+		else {
+			rotationAngle = 0.0f;
+		}
 	}
 
 	glDeleteVertexArrays(1, &vao);
