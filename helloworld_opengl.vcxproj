@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClCompile Include="deps\glad.c" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="shaders\vertex_shader.vert">
@@ -147,6 +148,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment_shader.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Shader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
