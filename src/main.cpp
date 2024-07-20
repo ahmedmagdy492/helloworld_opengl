@@ -96,6 +96,8 @@ int main() {
 		
 		shader.use();
 
+		shader.setFloat("h_offset", .2);
+
 		glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
