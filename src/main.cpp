@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "Shader.h"
+#include "Texture2D.h"
 
 #include "libs/stb_image.h"
 
@@ -85,27 +86,13 @@ int main() {
 	Shader shader("shaders/vertex_shader.vert", "shaders/fragment_shader.frag");
 
 	// textures
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	Texture2D texture("container.jpg", GL_RGB);
+	texture.setOption(GL_TEXTURE_WRAP_S, GL_REPEAT);
+	texture.setOption(GL_TEXTURE_WRAP_T, GL_REPEAT);
+	texture.setOption(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	texture.setOption(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	// loading an image data
-	int imgWidth, imgHeight, nChannels;
-	unsigned char* imgData = stbi_load("container.jpg", &imgWidth, &imgHeight, &nChannels, 0);
-
-	if (imgData) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgWidth, imgHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "Failed to load image" << std::endl;
-	}
-	stbi_image_free(imgData);
+	Texture2D texture2("awesomeface.png", GL_RGBA);
 
 	// position vertex attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (const void*)0);
@@ -125,6 +112,8 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		shader.use();
+		shader.setInt("ourTexture", 0);
+		shader.setInt("secTexture", 1);
 
 		glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

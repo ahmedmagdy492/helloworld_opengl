@@ -141,6 +141,7 @@
     <ClCompile Include="src\libs\stb_image.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="shaders\vertex_shader.vert">
@@ -153,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="src\libs\stb_image.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Texture2D.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg">
