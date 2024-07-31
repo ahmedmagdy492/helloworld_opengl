@@ -87,6 +87,7 @@ int main() {
 	// textures
 	unsigned int texture;
 	glGenTextures(1, &texture);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -95,7 +96,7 @@ int main() {
 
 	// loading an image data
 	int imgWidth, imgHeight, nChannels;
-	unsigned char* imgData = stbi_load("container.png", &imgWidth, &imgHeight, &nChannels, 0);
+	unsigned char* imgData = stbi_load("container.jpg", &imgWidth, &imgHeight, &nChannels, 0);
 
 	if (imgData) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgWidth, imgHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
@@ -125,7 +126,6 @@ int main() {
 		
 		shader.use();
 
-		glBindTexture(GL_TEXTURE_2D, texture);
 		glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
