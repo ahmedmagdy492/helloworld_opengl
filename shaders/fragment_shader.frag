@@ -9,10 +9,12 @@ out vec4 FragColor;
 uniform sampler2D ourTexture;
 uniform sampler2D secTexture;
 
+uniform float mixValue;
+
 void main() {
 	//FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
 	//FragColor = vec4(outColor, 1.0);
 	//FragColor = texture(ourTexture, texCoord) * vec4(outColor, 1.0);
 
-	FragColor = mix(texture(ourTexture, texCoord), texture(secTexture, texCoord2), 0.2);
+	FragColor = mix(texture(ourTexture, texCoord), texture(secTexture, texCoord2), mixValue);
 }
