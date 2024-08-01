@@ -27,10 +27,10 @@ int main() {
 
 	float vertexData[] = {
 		// positions        // colors		  // texture coorindates
-		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-		 0.5f,  0.5f, 0.0f, 1.0f, 0.5f, 1.0f, 1.0f, 1.0f
+		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+		-0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 2.0f,
+		 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  2.0f, 0.0f,
+		 0.5f,  0.5f, 0.0f, 1.0f, 0.5f, 1.0f, 1.0f, 1.0f,  2.0f, 2.0f
 	};
 
 	unsigned int indicies[] = {
@@ -93,17 +93,24 @@ int main() {
 	texture.setOption(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	Texture2D texture2("awesomeface.png", GL_RGBA);
+	texture2.setOption(GL_TEXTURE_WRAP_S, GL_REPEAT);
+	texture2.setOption(GL_TEXTURE_WRAP_T, GL_REPEAT);
+	texture2.setOption(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	texture2.setOption(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	// position vertex attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (const void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (const void*)0);
 	glEnableVertexAttribArray(0);
 
 	// color vertex attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float)*3));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(sizeof(float)*3));
 	glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 6));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(sizeof(float) * 6));
 	glEnableVertexAttribArray(2);
+
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(sizeof(float) * 8));
+	glEnableVertexAttribArray(3);
 
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);

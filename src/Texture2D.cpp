@@ -10,7 +10,8 @@ Texture2D::Texture2D(const char* imagePath, GLenum imgPixelFormat) {
 		throw new std::string("Unable to load provided image");
 
 	glGenTextures(1, &ID);
-	glActiveTexture(GL_TEXTURE0 + textureUnit);
+	this->currentTextureUnit = GL_TEXTURE0 + textureUnit;
+	glActiveTexture(this->currentTextureUnit);
 	textureUnit++;
 	glBindTexture(GL_TEXTURE_2D, ID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, imgPixelFormat, GL_UNSIGNED_BYTE, data);

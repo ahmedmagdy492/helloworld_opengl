@@ -7,6 +7,7 @@
 class Texture2D {
 private:
 	unsigned int ID;
+	int currentTextureUnit;
 	int width, height, nChannels;
 
 public:
