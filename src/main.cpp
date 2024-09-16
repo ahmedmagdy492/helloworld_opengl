@@ -29,17 +29,32 @@ int main() {
 	const int width = 800;
 	const int height = 600;
 
-	float vertexData[] = {
-		// positions        // colors		  // texture coorindates
-		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-		 0.5f,  0.5f, 0.0f, 1.0f, 0.5f, 1.0f, 1.0f, 1.0f
+	float vertexData[][32] = {
+		{
+			// positions        // colors		  // texture coorindates
+			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+			 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 0.5f, 1.0f, 1.0f, 1.0f
+		},
+		{
+			// positions        // colors		  // texture coorindates
+			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+			 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 0.5f, 1.0f, 1.0f, 1.0f
+		}
 	};
 
-	unsigned int indicies[] = {
-		0, 1, 2,
-		1, 3, 2
+	unsigned int indicies[][6] = {
+		{
+			0, 1, 2,
+			1, 3, 2
+		},
+		{
+			0, 1, 2,
+			1, 3, 2
+		}
 	};
 
 	glfwInit();
@@ -71,21 +86,21 @@ int main() {
 
 	std::cout << "max no of vertex attributes: " << nVattribs << std::endl;
 
-	unsigned int vbo;
-	glGenBuffers(1, &vbo);
+	unsigned int vbo[2];
+	glGenBuffers(2, vbo);
 
-	unsigned int ebo;
-	glGenBuffers(1, &ebo);
+	unsigned int ebo[2];
+	glGenBuffers(2, ebo);
 
-	unsigned int vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+	unsigned int vao[2];
+	glGenVertexArrays(2, vao);
+	glBindVertexArray(vao[0]);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData[0]), vertexData[0], GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies[0]), indicies[0], GL_STATIC_DRAW);
 
 	Shader shader("shaders/vertex_shader.vert", "shaders/fragment_shader.frag");
 
@@ -109,6 +124,27 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 6));
 	glEnableVertexAttribArray(2);
 
+
+	// 2nd vertex buffer
+	glBindVertexArray(vao[1]);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData[1]), vertexData[1], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies[1]), indicies[1], GL_STATIC_DRAW);
+
+	// position vertex attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (const void*)0);
+	glEnableVertexAttribArray(0);
+
+	// color vertex attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 3));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 6));
+	glEnableVertexAttribArray(2);
+
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);
 
@@ -124,16 +160,24 @@ int main() {
 		shader.setInt("secTexture", 1);
 		shader.setMat4("transform", glm::value_ptr(rotScaleMat));
 
-		glBindVertexArray(vao);
+		glBindVertexArray(vao[0]);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		glm::mat4 transMat = glm::mat4(1.0f);
+		transMat = glm::scale(transMat, glm::vec3(glm::sin(glfwGetTime()), glm::sin(glfwGetTime()), glm::sin(glfwGetTime())));
+		transMat = glm::translate(transMat, glm::vec3(-0.5f, 0.5f, 0.0f));
+		shader.setMat4("transform", glm::value_ptr(transMat));
+
+		glBindVertexArray(vao[1]);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays(1, &vao);
+	glDeleteVertexArrays(2, vao);
 
-	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(2, vbo);
 
 	glfwTerminate();
 }
