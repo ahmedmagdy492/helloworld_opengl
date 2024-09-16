@@ -1,6 +1,10 @@
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
 
+#include <glm.hpp>
+#include <gtc\matrix_transform.hpp>
+#include <gtc\type_ptr.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -105,6 +109,13 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 6));
 	glEnableVertexAttribArray(2);
 
+	float rotAngle = 0.0f;
+
+	glm::mat4 rotScaleMat = glm::mat4(1.0f);
+	//rotScaleMat = glm::scale(rotScaleMat, glm::vec3(0.5f, 0.5f, 0.5f));
+	rotScaleMat = glm::rotate(rotScaleMat, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+	rotScaleMat = glm::translate(rotScaleMat, glm::vec3(0.5f, -0.5f, 0.0f));
+
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);
 
@@ -114,12 +125,15 @@ int main() {
 		shader.use();
 		shader.setInt("ourTexture", 0);
 		shader.setInt("secTexture", 1);
+		shader.setMat4("transform", glm::value_ptr(rotScaleMat));
 
 		glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		rotScaleMat = glm::rotate(rotScaleMat, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 	}
 
 	glDeleteVertexArrays(1, &vao);

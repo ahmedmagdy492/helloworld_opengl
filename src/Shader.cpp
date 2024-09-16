@@ -91,6 +91,11 @@ void Shader::setFloat(const std::string& name, float value) const {
 	glUniform1f(location, value);
 }
 
+void Shader::setMat4(const std::string& name, float* value) const {
+	int location = glGetUniformLocation(ID, name.c_str());
+	glUniformMatrix4fv(location, 1, GL_FALSE, value);
+}
+
 Shader::~Shader() {
 	glDeleteProgram(ID);
 }
