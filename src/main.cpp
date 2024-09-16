@@ -109,18 +109,15 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 6));
 	glEnableVertexAttribArray(2);
 
-	float rotAngle = 0.0f;
-
-	glm::mat4 rotScaleMat = glm::mat4(1.0f);
-	//rotScaleMat = glm::scale(rotScaleMat, glm::vec3(0.5f, 0.5f, 0.5f));
-	rotScaleMat = glm::rotate(rotScaleMat, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-	rotScaleMat = glm::translate(rotScaleMat, glm::vec3(0.5f, -0.5f, 0.0f));
-
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		glm::mat4 rotScaleMat = glm::mat4(1.0f);
+		rotScaleMat = glm::rotate(rotScaleMat, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+		rotScaleMat = glm::translate(rotScaleMat, glm::vec3(0.5f, -0.5f, 0.0f));
 		
 		shader.use();
 		shader.setInt("ourTexture", 0);
@@ -132,8 +129,6 @@ int main() {
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-
-		rotScaleMat = glm::rotate(rotScaleMat, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 	}
 
 	glDeleteVertexArrays(1, &vao);
