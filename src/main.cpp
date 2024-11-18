@@ -87,6 +87,10 @@ int main() {
 		glm::vec3(-1.3f, 1.0f, -1.5f)
 	};
 
+	bool isWPressed = false, isSPressed = false, isDPressed = false, isAPressed = false;
+	float cameraX = 0.0f, cameraZ = -3.0f;
+	float cameraMoveSpeed = 4.0f, deltaTime = 0.12f;
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -149,11 +153,43 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);
 
+		if (!isWPressed && glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+			isWPressed = true;
+			cameraZ += cameraMoveSpeed * deltaTime;
+		}
+		else if(isWPressed && glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE) {
+			isWPressed = false;
+		}
+
+		if (!isSPressed && glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+			isSPressed = true;
+			cameraZ -= cameraMoveSpeed * deltaTime;
+		}
+		else if (isSPressed && glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE) {
+			isSPressed = false;
+		}
+
+		if (!isAPressed && glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+			isAPressed = true;
+			cameraX += cameraMoveSpeed * deltaTime;
+		}
+		else if (isAPressed && glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE) {
+			isAPressed = false;
+		}
+
+		if (!isDPressed && glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+			isDPressed = true;
+			cameraX -= cameraMoveSpeed * deltaTime;
+		}
+		else if (isDPressed && glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE) {
+			isDPressed = false;
+		}
+
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		view = glm::translate(view, glm::vec3(cameraX, 0.0f, cameraZ));
 
 		glm::mat4 projection = glm::mat4(1.0f);
 		projection = glm::perspective<float>(glm::radians(45.0f), width / height, 0.1f, 100.0f);
@@ -169,8 +205,15 @@ int main() {
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(0.5f,
-				1.0f, 0.0f));
+			if ((i % 3) == 0) {
+				angle = glm::radians(glfwGetTime() * 20.0f * (i+1));
+				model = glm::rotate(model, angle, glm::vec3(0.5f,
+					1.0f, 0.0f));
+			}
+			else {
+				model = glm::rotate(model, glm::radians(angle), glm::vec3(0.5f,
+					1.0f, 0.0f));
+			}
 			shader.setMat4("model", glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
