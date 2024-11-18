@@ -24,6 +24,18 @@ void processInput(GLFWwindow* window) {
 	}
 }
 
+float planeZValue = -1.5f;
+const float scrollSpeed = 0.120f;
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	planeZValue += yoffset * scrollSpeed;
+}
+
+bool isMouseClicking = false;
+double initX = 0.0f, initY = 0.0f;
+double lastX = 0.0f, lastY = 0.0f;
+
 int main() {
 
 	const int width = 800;
@@ -90,13 +102,11 @@ int main() {
 	Shader shader("shaders/vertex_shader.vert", "shaders/fragment_shader.frag");
 
 	// textures
-	Texture2D texture("container.jpg", GL_RGB);
+	Texture2D texture("container.png", GL_RGB);
 	texture.setOption(GL_TEXTURE_WRAP_S, GL_REPEAT);
 	texture.setOption(GL_TEXTURE_WRAP_T, GL_REPEAT);
 	texture.setOption(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	texture.setOption(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	Texture2D texture2("awesomeface.png", GL_RGBA);
 
 	// position vertex attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (const void*)0);
@@ -109,26 +119,34 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 6));
 	glEnableVertexAttribArray(2);
 
-	float moveVertical = -3.0f;
+	glfwSetScrollCallback(window, scroll_callback);
 
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		if (!isMouseClicking && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+			isMouseClicking = true;
+			glfwGetCursorPos(window, &initX, &initY);
+		}
+		else if (isMouseClicking && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+			isMouseClicking = false;
+			glfwGetCursorPos(window, &lastX, &lastY);
+		}
+
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, planeZValue));
 
 		glm::mat4 projection = glm::mat4(1.0f);
 		projection = glm::perspective<float>(glm::radians(45.0f), width / height, 0.1f, 100.0f);
 
 		shader.use();
 		shader.setInt("ourTexture", 0);
-		shader.setInt("secTexture", 1);
 		shader.setMat4("model", glm::value_ptr(model));
 		shader.setMat4("view", glm::value_ptr(view));
 		shader.setMat4("projection", glm::value_ptr(projection));
