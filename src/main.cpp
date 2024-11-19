@@ -9,18 +9,19 @@
 #include <fstream>
 #include <sstream>
 
+#include "include\GLWindow.h"
 #include "Shader.h"
 #include "Texture2D.h"
 
 #include "libs/stb_image.h"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+void framebuffer_size_callback(int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow* window) {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, true);
+void processInput(GLWindow& glWindow) {
+	if (glWindow.IsKeyPressed(GLFW_KEY_ESCAPE, GLFW_PRESS)) {
+		glWindow.CloseWindow();
 	}
 }
 
@@ -87,20 +88,7 @@ int main() {
 		glm::vec3(-1.3f, 1.0f, -1.5f)
 	};
 
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	GLFWwindow *window = glfwCreateWindow(width, height, "OPEN GL First Project", NULL, NULL);
-
-	if (window == NULL) {
-		std::cout << "GLFW failed to create a window" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwMakeContextCurrent(window);
+	GLWindow glWindow(width, height, "Open GL Window");
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to init glad" << std::endl;
@@ -109,12 +97,7 @@ int main() {
 
 	glViewport(0, 0, width, height);
 
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-	int nVattribs;
-	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nVattribs);
-
-	std::cout << "max no of vertex attributes: " << nVattribs << std::endl;
+	glWindow.SetOnFrameBufferChangeHandler(framebuffer_size_callback);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -146,8 +129,8 @@ int main() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(sizeof(float) * 3));
 	glEnableVertexAttribArray(1);
 
-	while (!glfwWindowShouldClose(window)) {
-		processInput(window);
+	while (!glWindow.ShouldWindowClose()) {
+		processInput(glWindow);
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -175,13 +158,11 @@ int main() {
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+		glWindow.SwapBuffers();
+		glWindow.PollEvents();
 	}
 
 	glDeleteVertexArrays(1, &vao);
 
 	glDeleteBuffers(1, &vbo);
-
-	glfwTerminate();
 }

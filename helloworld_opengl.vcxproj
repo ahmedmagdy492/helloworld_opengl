@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="deps\glad.c" />
+    <ClCompile Include="src\GLWindow.cpp" />
     <ClCompile Include="src\libs\stb_image.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Shader.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="src\libs\stb_image.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Texture2D.h" />
+    <ClInclude Include="src\include\GLWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg">
